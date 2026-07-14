@@ -2,31 +2,73 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Model
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $fillable = [
+    'full_name',
+    'username',
+    'email',
+    'phone',
+    'avatar',
+    'gender',
+    'birthday',
+    'email_verified_at',
+    'role',
+    'status',
+    'password',
+    'remember_token',
+];
+protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'birthday' => 'date',
+        'email_verified_at' => 'datetime',
+        'status' => 'boolean',
+    ];
+
+    // Address
+    public function addresses()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(UserAddress::class);
+    }
+
+    // Cart
+    public function carts()
+    {
+        return $this->hasMany(ShoppingCart::class);
+    }
+
+    // Orders
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    // Reviews
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    // Blog Posts
+    public function blogPosts()
+    {
+        return $this->hasMany(BlogPost::class);
+    }
+
+    // Order Histories
+    public function orderHistories()
+    {
+        return $this->hasMany(OrderHistory::class, 'updated_by');
     }
 }
+
